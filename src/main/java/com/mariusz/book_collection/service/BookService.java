@@ -9,6 +9,6 @@ public interface BookService {
 
     Optional<Book> findBookById(Long id);
     Optional<Book> findBookByIsbn(String isbn);
-
     List<Book> findAllBooks();
+    Book save(Book book);
 }

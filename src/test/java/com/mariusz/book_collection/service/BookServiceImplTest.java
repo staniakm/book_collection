@@ -58,12 +58,26 @@ public class BookServiceImplTest {
         book2.setDescription("Desctiption that will be tested...");
         book2.setIsbn("1234567899");
 
+        Book newBookWithoutId = new Book();
+        newBookWithoutId.setIsbn("1236547899");
+        newBookWithoutId.setDescription("No id book");
+        newBookWithoutId.setTitle("Book without ID");
+        newBookWithoutId.setAuthor("Test");
+
+        Book newBookWithId = new Book();
+        newBookWithId.setAuthor(newBookWithoutId.getAuthor());
+        newBookWithId.setDescription(newBookWithoutId.getDescription());
+        newBookWithId.setTitle(newBookWithoutId.getTitle());
+        newBookWithId.setIsbn(newBookWithoutId.getIsbn());
+        newBookWithId.setId(3L);
+
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
         when(bookRepository.findById(2L)).thenReturn(Optional.empty());
 
         when(bookRepository.findByIsbn("9788376489117")).thenReturn(Optional.of(book));
         when(bookRepository.findByIsbn("0000000000")).thenReturn(Optional.empty());
         when(bookRepository.findAll()).thenReturn(Arrays.asList(book,book2));
+        when(bookRepository.save(newBookWithoutId)).thenReturn(newBookWithId);
 
     }
 
@@ -80,7 +94,7 @@ public class BookServiceImplTest {
 
         assertThat(result.isPresent()).isTrue();
 
-        Book book = null;
+        Book book ;
         if (result.isPresent()) {
             book = result.get();
             assertThat(book.getAuthor()).isEqualTo("Lee Carroll");
@@ -142,6 +156,26 @@ public class BookServiceImplTest {
         reset(bookRepository);
     }
 
+    @Test
+    public void shouldReturnBookWithIdWhenSaveBook(){
+        Book book = new Book();
+        book.setIsbn("1236547899");
+        book.setDescription("No id book");
+        book.setTitle("Book without ID");
+        book.setAuthor("Test");
+        Book saved = bookService.save(book);
+
+        assertThat(book.getId()).isEqualTo(null);
+        assertThat(saved!=null).isTrue();
+        assertThat(saved.getId()!=null).isTrue();
+
+        assertThat(book.getTitle()).isEqualTo(saved.getTitle());
+        assertThat(book.getAuthor()).isEqualTo(saved.getAuthor());
+        assertThat(book.getDescription()).isEqualTo(saved.getDescription());
+        assertThat(book.getIsbn()).isEqualTo(saved.getIsbn());
+
+
+    }
 
 
 

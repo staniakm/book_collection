@@ -4,7 +4,6 @@ import com.mariusz.book_collection.entity.Book;
 import com.mariusz.book_collection.repository.BookRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,5 +29,10 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<Book> findAllBooks() {
         return bookRepository.findAll();
+    }
+
+    @Override
+    public Book save(Book book) {
+        return bookRepository.save(book);
     }
 }
