@@ -1,6 +1,7 @@
 package com.mariusz.book_collection.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,6 +11,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Data
+@EqualsAndHashCode
 public class Book {
 
     @Id
