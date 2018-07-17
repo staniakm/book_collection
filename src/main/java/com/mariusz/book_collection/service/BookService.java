@@ -7,5 +7,6 @@ import java.util.Optional;
 public interface BookService {
 
     Optional<Book> findBookById(Long id);
+    Optional<Book> findBookByIsbn(String isbn);
 
 }
