@@ -11,6 +11,8 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
@@ -49,11 +51,19 @@ public class BookServiceImplTest {
         book.setDescription("Ludzie widzą tylko to co chcą widzieć. Zajrzyj głębiej...");
         book.setIsbn("9788376489117");
 
+        Book book2 = new Book();
+        book2.setAuthor("Test Author");
+        book2.setId(2L);
+        book2.setTitle("Test title");
+        book2.setDescription("Desctiption that will be tested...");
+        book2.setIsbn("1234567899");
+
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
         when(bookRepository.findById(2L)).thenReturn(Optional.empty());
 
         when(bookRepository.findByIsbn("9788376489117")).thenReturn(Optional.of(book));
         when(bookRepository.findByIsbn("0000000000")).thenReturn(Optional.empty());
+        when(bookRepository.findAll()).thenReturn(Arrays.asList(book,book2));
 
     }
 
@@ -117,6 +127,18 @@ public class BookServiceImplTest {
         assertThat(result.isPresent()).isFalse();
 
         verify(bookRepository, times(1)).findById(2L);
+        reset(bookRepository);
+    }
+
+    @Test
+    public void shouldReturnListOfTwoElementsWhenGetAllMethodCalled(){
+        List<Book> books = bookService.findAllBooks();
+
+        assertThat(books.size()).isEqualTo(2);
+        assertThat(books.stream().anyMatch(book -> book.getId()==1L)).isTrue();
+        assertThat(books.stream().anyMatch(book -> book.getId()==2L)).isTrue();
+
+        verify(bookRepository,times(1)).findAll();
         reset(bookRepository);
     }
 
