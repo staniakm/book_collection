@@ -23,7 +23,10 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Optional<Book> findBookByIsbn(String isbn) {
-        return bookRepository.findByIsbn(isbn);
+        String pattern = "([^\\d])+";
+        String verifiedIsbn = isbn.replaceAll(pattern,"");
+
+        return bookRepository.findByIsbn(verifiedIsbn);
     }
 
     @Override

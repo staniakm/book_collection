@@ -108,6 +108,24 @@ public class BookServiceImplTest {
         reset(bookRepository);
     }
 
+    @Test
+    public void shouldReturnBookWhenProvideCorrectIsbnWithSeparatedDigits() {
+        Optional<Book> result = bookService.findBookByIsbn("978-837-648-911-7");
+
+        assertThat(result.isPresent()).isTrue();
+
+        Book book ;
+        if (result.isPresent()) {
+            book = result.get();
+            assertThat(book.getAuthor()).isEqualTo("Lee Carroll");
+            assertThat(book.getId()).isEqualTo(1L);
+            assertThat(book.getIsbn()).isEqualTo("9788376489117");
+        }
+
+        verify(bookRepository, times(1)).findByIsbn("9788376489117");
+        reset(bookRepository);
+    }
+
 
     @Test
     public void shouldReturnEnptyOptionalWhenProvideIncorrectIsbn() {
@@ -173,8 +191,6 @@ public class BookServiceImplTest {
         assertThat(book.getAuthor()).isEqualTo(saved.getAuthor());
         assertThat(book.getDescription()).isEqualTo(saved.getDescription());
         assertThat(book.getIsbn()).isEqualTo(saved.getIsbn());
-
-
     }
 
 
