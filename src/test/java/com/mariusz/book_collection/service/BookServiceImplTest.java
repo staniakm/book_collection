@@ -6,9 +6,7 @@ import com.mariusz.book_collection.repository.BookRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Arrays;
@@ -20,30 +18,17 @@ import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 public class BookServiceImplTest {
-    @TestConfiguration
-    static class BookServiceImplConfiguration {
-        private BookRepository bookRepository = mock(BookRepository.class);
 
-        @Bean
-        BookService bookService() {
-            return new BookServiceImpl(bookRepository);
-        }
-
-        @Bean
-        BookRepository bookRepository() {
-            return bookRepository;
-        }
-    }
-
-    @Autowired
     private BookService bookService;
-    @Autowired
+    @MockBean
     private BookRepository bookRepository;
 
 
 
     @Before
     public void setup() {
+        bookService = new BookServiceImpl(bookRepository);
+
         Book book = new Book();
         book.setAuthor("Lee Carroll");
         book.setId(1L);
@@ -181,7 +166,7 @@ public class BookServiceImplTest {
         book.setDescription("No id book");
         book.setTitle("Book without ID");
         book.setAuthor("Test");
-        Book saved = bookService.save(book);
+        Book saved = bookService.saveOrUpdate(book);
 
         assertThat(book.getId()).isEqualTo(null);
         assertThat(saved!=null).isTrue();
@@ -193,6 +178,27 @@ public class BookServiceImplTest {
         assertThat(book.getIsbn()).isEqualTo(saved.getIsbn());
     }
 
+    @Test
+    public void updateBookShouldReturnBookWithNewData(){
+        //given
+        Optional<Book> result = bookService.findBookById(1L);
+        Book book = result.orElse(new Book());
+        book.setTitle("New title for book 1");
+
+        //when
+        when(bookRepository.save(book)).thenReturn(book);
+        Book newBook = bookService.saveOrUpdate(book);
+
+        //then
+        assertThat(newBook!=null).isTrue();
+
+        assertThat(book.getTitle()).isEqualTo("New title for book 1");
+        assertThat(newBook.getTitle()).isEqualTo("New title for book 1");
+
+        assertThat(newBook.getId()).isEqualTo(book.getId());
+
+        verify(bookRepository,times(1)).save(book);
+    }
 
 
 }
