@@ -24,6 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BookControllerTest {
@@ -58,7 +59,6 @@ public class BookControllerTest {
         given(bookService.saveOrUpdate(any(Book.class))).willReturn(book);
 
         //when
-        when(bookService.findBookById(1L)).thenReturn(Optional.of(book));
 
         MockHttpServletResponse response = mockMvc.perform(post("/api/books")
                 .contentType(MediaType.APPLICATION_JSON).content(jacksonTester
@@ -69,6 +69,36 @@ public class BookControllerTest {
         assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
         assertThat(response.getContentAsString())
                 .isEqualTo(jacksonTester.write(book).getJson());
+    }
+
+    @Test
+    public void typedRequestShouldUpdateOpinion() throws Exception {
+
+        //given
+        Book insertBook = new Book();
+        insertBook.setId(1L);
+        insertBook.setTitle("Game of Throne");
+        insertBook.setAuthor("Gorge RR Martin");
+
+        Book returnBook = new Book();
+        returnBook.setId(1L);
+        returnBook.setTitle("Game of Throne");
+        returnBook.setAuthor("Gorge R.R. Martin");
+
+        given(bookService.saveOrUpdate(insertBook)).willReturn(returnBook);
+
+        //when
+        when(bookService.findBookById(1L)).thenReturn(Optional.of(returnBook));
+
+        MockHttpServletResponse response = mockMvc.perform(put("/api/books/1")
+                .contentType(MediaType.APPLICATION_JSON).content(jacksonTester
+                        .write(insertBook).getJson()))
+                .andReturn().getResponse();
+
+        //then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getContentAsString())
+                .isEqualTo(jacksonTester.write(returnBook).getJson());
     }
 
 }

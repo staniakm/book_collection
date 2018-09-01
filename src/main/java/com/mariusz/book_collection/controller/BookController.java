@@ -26,4 +26,13 @@ public class BookController {
         Book createdBook = bookService.saveOrUpdate(book);
         return new ResponseEntity<>(createdBook, HttpStatus.CREATED);
     }
+
+    @PutMapping(value = "/{id}", produces = {"application/hal+json"})
+    public ResponseEntity<Book> update(@PathVariable("id") Long bookId, @RequestBody Book book){
+
+        return bookService.findBookById(bookId).map(foundBook -> {
+            book.setId(bookId);
+            return new ResponseEntity<>(bookService.saveOrUpdate(book),HttpStatus.OK);
+        }).orElseGet(()-> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
 }
