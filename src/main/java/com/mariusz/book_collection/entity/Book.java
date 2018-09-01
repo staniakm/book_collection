@@ -1,7 +1,9 @@
 package com.mariusz.book_collection.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,7 +14,8 @@ import java.util.Objects;
 
 @Entity
 @Data
-@EqualsAndHashCode
+@AllArgsConstructor
+@NoArgsConstructor
 public class Book {
 
     @Id
