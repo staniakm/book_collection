@@ -3,6 +3,7 @@ package com.mariusz.book_collection.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mariusz.book_collection.entity.Book;
 import com.mariusz.book_collection.service.BookService;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,15 +17,22 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BookControllerTest {
@@ -45,6 +53,85 @@ public class BookControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(bookController).build();
     }
 
+    @Test
+    public void typedIdShouldReturnSpecifiedBook() throws Exception {
+
+        //given
+        Book book = new Book();
+        book.setId(1L);
+        book.setTitle("Pinokio");
+
+        given(bookService.findBookById(1L))
+                .willReturn(Optional.of(book));
+
+        //when
+        MockHttpServletResponse response = mockMvc
+                .perform(get("/api/books/1").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andReturn()
+                .getResponse();
+
+        //then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getContentAsString())
+                .isEqualToIgnoringCase(jacksonTester.write(book).getJson());
+    }
+
+    @Test
+    public void typedIncorrectIdShouldReturnEmptyOptionalAndNotFoundStatus() throws Exception {
+
+        //given
+        given(bookService.findBookById(1L))
+                .willReturn(Optional.empty());
+
+        //when
+        MockHttpServletResponse response = mockMvc
+                .perform(get("/api/books/1").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andReturn()
+                .getResponse();
+
+        //then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+
+    }
+
+    @Test
+    public void typedRequestShouldReturnAllBooks() throws Exception {
+
+        //given
+        Book book1 = new Book(1L,"Pinokio","Annonymus", "312312423","Story about wooden boy.");
+        Book book2 = new Book(2L,"Martian","Annonymus", "322312423","Story about mars and a man.");
+
+        //when
+        when(bookService.findAllBooks()).thenReturn(new ArrayList<>(Arrays.asList(book1, book2)));
+
+        //when
+        mockMvc.perform(get("/api/books"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[1].id", Matchers.is(2)))
+                .andExpect(jsonPath("$[1].title", Matchers.is("Martian")))
+                .andExpect(jsonPath("$[1].isbn", Matchers.is("322312423")));
+
+        verify(bookService, times(1)).findAllBooks();
+        verifyNoMoreInteractions(bookService);
+    }
+
+    @Test
+    public void typedRequestShouldReturnEmptyListIfNoBooksExists() throws Exception {
+
+        //given
+
+        //when
+        when(bookService.findAllBooks()).thenReturn(new ArrayList<>());
+
+        //when
+        mockMvc.perform(get("/api/books"))
+                .andExpect(status().isNotFound());
+
+        verify(bookService, times(1)).findAllBooks();
+        verifyNoMoreInteractions(bookService);
+    }
 
     @Test
     public void typedRequestShouldCreateNewBook() throws Exception {

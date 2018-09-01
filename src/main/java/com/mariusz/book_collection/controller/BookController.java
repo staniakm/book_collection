@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -21,13 +22,31 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    @PostMapping(value = "", produces = {"application/hal+json"})
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<Book> getBook(@PathVariable("id") Long bookId){
+        return bookService
+                .findBookById(bookId)
+                .map(foundBook -> new ResponseEntity<>(foundBook, HttpStatus.OK))
+                .orElseGet(()-> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping(value = "")
+    public ResponseEntity<List<Book>> getAllBooks(){
+        List<Book> books = bookService.findAllBooks();
+        if (books.size()==0){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(books, HttpStatus.OK);
+    }
+
+
+    @PostMapping(value = "")
     public ResponseEntity<Book> create(@RequestBody final Book book) {
         Book createdBook = bookService.saveOrUpdate(book);
         return new ResponseEntity<>(createdBook, HttpStatus.CREATED);
     }
 
-    @PutMapping(value = "/{id}", produces = {"application/hal+json"})
+    @PutMapping(value = "/{id}")
     public ResponseEntity<Book> update(@PathVariable("id") Long bookId, @RequestBody Book book){
 
         return bookService.findBookById(bookId).map(foundBook -> {
