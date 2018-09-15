@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ShelfServiceImpl implements ShelfService {
@@ -20,5 +21,10 @@ public class ShelfServiceImpl implements ShelfService {
     @Override
     public List<Shelf> getAllShelfs() {
         return shelfRepository.findAll();
+    }
+
+    @Override
+    public Optional<Shelf> findShelfById(Long shelfId) {
+        return Optional.empty();
     }
 }
