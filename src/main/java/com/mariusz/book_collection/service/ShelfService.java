@@ -11,4 +11,5 @@ public interface ShelfService {
     List<Shelf> getAllShelfs();
     Optional<Shelf> findShelfById(Long shelfId);
 
+    Optional<Shelf> findShelfByDescription(String description);
 }

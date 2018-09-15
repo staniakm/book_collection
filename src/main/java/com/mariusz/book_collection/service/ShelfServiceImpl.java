@@ -27,4 +27,9 @@ public class ShelfServiceImpl implements ShelfService {
     public Optional<Shelf> findShelfById(Long shelfId) {
         return shelfRepository.findById(shelfId);
     }
+
+    @Override
+    public Optional<Shelf> findShelfByDescription(String description) {
+        return shelfRepository.findByDescription(description);
+    }
 }
