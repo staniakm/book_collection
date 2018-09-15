@@ -11,14 +11,19 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.json.JacksonTester;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Optional;
 
+import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -43,6 +48,48 @@ public class ShelfControllerTest {
         JacksonTester.initFields(this, new ObjectMapper());
         mockMvc = MockMvcBuilders.standaloneSetup(shelfController).build();
     }
+
+    @Test
+    public void typedIdShouldReturnSpecifiedShelf() throws Exception {
+
+        //given
+        Shelf shelf = new Shelf(1L,"Sypialnia");
+
+        given(shelfService.findShelfById(1L))
+                .willReturn(Optional.of(shelf));
+
+        //when
+        MockHttpServletResponse response = mockMvc
+                .perform(get("/api/shelfs/1").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andReturn()
+                .getResponse();
+
+        //then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getContentAsString())
+                .isEqualToIgnoringCase(jacksonTester.write(shelf).getJson());
+    }
+
+    @Test
+    public void typedIncorrectIdShouldReturnStatusNotFound() throws Exception {
+
+        //given
+
+        given(shelfService.findShelfById(1L))
+                .willReturn(Optional.empty());
+
+        //when
+        MockHttpServletResponse response = mockMvc
+                .perform(get("/api/shelfs/1").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andReturn()
+                .getResponse();
+
+        //then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+        verify(shelfService, times(1)).findShelfById(anyLong());
+        verifyNoMoreInteractions(shelfService);
+    }
+
 
     @Test
     public void typedRequestShouldReturnAllShelfs() throws Exception {
