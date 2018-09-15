@@ -10,5 +10,6 @@ import java.util.Optional;
 public interface ShelfRepository extends JpaRepository<Shelf, Long> {
 
     Optional<Shelf> findByDescription(String description);
+    Optional<Shelf> findById(Long shelfId);
 
 }
