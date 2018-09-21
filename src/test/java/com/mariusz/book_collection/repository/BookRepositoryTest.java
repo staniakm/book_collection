@@ -26,10 +26,12 @@ public class BookRepositoryTest {
     @Test
     public void existingBookShouldBeReturned(){
         Book book = createBook();
+        book.setTitle("Pinokio");
         Book testBookSavedInDb = testEntityManager.persist(book);
 
         Optional<Book> find = bookRepository.findById(testBookSavedInDb.getId());
         assertThat(find.isPresent()).isTrue();
+        assertThat(find.get().getTitle()).isEqualTo("Pinokio");
         testEntityManager.flush();
     }
 
