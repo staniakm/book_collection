@@ -2,28 +2,29 @@ package com.mariusz.book_collection.service;
 
 
 import com.mariusz.book_collection.entity.Book;
+import com.mariusz.book_collection.entity.Shelf;
 import com.mariusz.book_collection.repository.BookRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 public class BookServiceImplTest {
 
     private BookService bookService;
-    @MockBean
+    @Mock
     private BookRepository bookRepository;
-
-
 
     @Before
     public void setup() {
@@ -56,12 +57,19 @@ public class BookServiceImplTest {
         newBookWithId.setIsbn(newBookWithoutId.getIsbn());
         newBookWithId.setId(3L);
 
-        when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
-        when(bookRepository.findById(2L)).thenReturn(Optional.empty());
+        given(bookRepository.findById(1L)).willReturn(Optional.of(book));
+//        given(bookRepository.findById(2L)).willReturn(Optional.empty());
 
-        when(bookRepository.findByIsbn("9788376489117")).thenReturn(Optional.of(book));
-        when(bookRepository.findByIsbn("0000000000")).thenReturn(Optional.empty());
-        when(bookRepository.findAll()).thenReturn(Arrays.asList(book,book2));
+//        when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
+//        when(bookRepository.findById(2L)).thenReturn(Optional.empty());
+
+
+
+//        when(bookRepository.findByIsbn("9788376489117")).thenReturn(Optional.of(book));
+//        when(bookRepository.findByIsbn("0000000000")).thenReturn(Optional.empty());
+//        when(bookRepository.findAll()).thenReturn(Arrays.asList(book,book2));
+
+
         when(bookRepository.save(newBookWithoutId)).thenReturn(newBookWithId);
 
     }
@@ -74,7 +82,15 @@ public class BookServiceImplTest {
     }
 
     @Test
-    public void shouldReturnBookWhenProvideCorrectIsbn() {
+        public void shouldReturnBookWhenProvideCorrectIsbn() {
+        Book book1 = new Book();
+        book1.setAuthor("Lee Carroll");
+        book1.setId(1L);
+        book1.setTitle("Królestwo czerwonego łabędzia");
+        book1.setDescription("Ludzie widzą tylko to co chcą widzieć. Zajrzyj głębiej...");
+        book1.setIsbn("9788376489117");
+
+        given(bookRepository.findByIsbn("9788376489117")).willReturn(Optional.of(book1));
         Optional<Book> result = bookService.findBookByIsbn("9788376489117");
 
         assertThat(result.isPresent()).isTrue();
@@ -95,6 +111,15 @@ public class BookServiceImplTest {
 
     @Test
     public void shouldReturnBookWhenProvideCorrectIsbnWithSeparatedDigits() {
+        Book book1 = new Book();
+        book1.setAuthor("Lee Carroll");
+        book1.setId(1L);
+        book1.setTitle("Królestwo czerwonego łabędzia");
+        book1.setDescription("Ludzie widzą tylko to co chcą widzieć. Zajrzyj głębiej...");
+        book1.setIsbn("9788376489117");
+
+        given(bookRepository.findByIsbn("9788376489117")).willReturn(Optional.of(book1));
+
         Optional<Book> result = bookService.findBookByIsbn("978-837-648-911-7");
 
         assertThat(result.isPresent()).isTrue();
@@ -149,6 +174,22 @@ public class BookServiceImplTest {
 
     @Test
     public void shouldReturnListOfTwoElementsWhenGetAllMethodCalled(){
+        Book book1 = new Book();
+        book1.setAuthor("Lee Carroll");
+        book1.setId(1L);
+        book1.setTitle("Królestwo czerwonego łabędzia");
+        book1.setDescription("Ludzie widzą tylko to co chcą widzieć. Zajrzyj głębiej...");
+        book1.setIsbn("9788376489117");
+
+        Book book2 = new Book();
+        book2.setAuthor("Test Author");
+        book2.setId(2L);
+        book2.setTitle("Test title");
+        book2.setDescription("Desctiption that will be tested...");
+        book2.setIsbn("1234567899");
+
+        given(bookRepository.findAll()).willReturn(Arrays.asList(book1, book2));
+
         List<Book> books = bookService.findAllBooks();
 
         assertThat(books.size()).isEqualTo(2);
@@ -198,6 +239,28 @@ public class BookServiceImplTest {
         assertThat(newBook.getId()).isEqualTo(book.getId());
 
         verify(bookRepository,times(1)).save(book);
+    }
+
+
+    @Test
+    public void putBookOnShelfReturnUpdatedBook(){
+
+        Shelf shelf = new Shelf(1L,"Bedroom");
+        Book book = new Book();
+        book.setId(1L);
+        book.setTitle("Pinokio");
+        book.setShelf(shelf);
+
+        Book bookWithoutShelf = new Book();
+        bookWithoutShelf.setId(1L);
+
+        given(bookRepository.save(any(Book.class))).willReturn(book);
+
+        Book bookOnShelf = bookService.putBookOnShelf(bookWithoutShelf, shelf);
+
+        assertThat(bookOnShelf.getTitle()).isEqualToIgnoringCase("Pinokio");
+        assertThat(bookOnShelf.getShelf().getDescription()).isEqualToIgnoringCase("Bedroom");
+
     }
 
 

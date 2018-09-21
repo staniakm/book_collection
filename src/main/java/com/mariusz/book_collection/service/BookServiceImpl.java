@@ -1,6 +1,7 @@
 package com.mariusz.book_collection.service;
 
 import com.mariusz.book_collection.entity.Book;
+import com.mariusz.book_collection.entity.Shelf;
 import com.mariusz.book_collection.repository.BookRepository;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,12 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Book saveOrUpdate(Book book) {
+        return bookRepository.save(book);
+    }
+
+    @Override
+    public Book putBookOnShelf(Book book, Shelf shelf) {
+        book.setShelf(shelf);
         return bookRepository.save(book);
     }
 }
