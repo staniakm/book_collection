@@ -1,29 +1,29 @@
 package com.mariusz.book_collection.service;
 
-import com.mariusz.book_collection.entity.Book;
 import com.mariusz.book_collection.entity.Shelf;
-import com.mariusz.book_collection.repository.BookRepository;
 import com.mariusz.book_collection.repository.ShelfRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 public class ShelfServiceImplTest {
 
 
     private ShelfService shelfService;
-    @MockBean
+    @Mock
     private ShelfRepository shelfRepository;
 
 
@@ -34,9 +34,7 @@ public class ShelfServiceImplTest {
 
         Shelf shelf1 = new Shelf(1L, "Sypialnia");
         Shelf shelf2 = new Shelf(2L, "Salon");
-
-
-        when(shelfRepository.findById(1L)).thenReturn(Optional.of(shelf1));
+        given(shelfRepository.findById(1L)).willReturn(Optional.of(shelf1));
         when(shelfRepository.findById(3L)).thenReturn(Optional.empty());
 
         when(shelfRepository.findByDescription(shelf1.getDescription())).thenReturn(Optional.of(shelf1));
