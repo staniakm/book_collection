@@ -127,13 +127,11 @@ public class IntegrationTests {
     public void putBook_willUpdateExistingBook() {
         //given
         Book insertBook = new Book();
-        insertBook.setId(1L);
         insertBook.setTitle("Game of Throne");
         insertBook.setAuthor("Gorge RR Martin");
         bookRepository.save(insertBook);
 
         Book returnBook = new Book();
-        returnBook.setId(1L);
         returnBook.setTitle("Game of Throne");
         returnBook.setAuthor("Gorge R.R. Martin");
 
@@ -186,4 +184,25 @@ public class IntegrationTests {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
+
+    @Test
+    public void getBookByIsbn_willReturnBook() {
+        Book book = new Book();
+        book.setTitle("Pinokio");
+        book.setAuthor("Carl Collodi");
+        book.setIsbn("123-456-789-0");
+        bookRepository.save(book);
+        ResponseEntity<Book> response = restTemplate.getForEntity("/api/books/book?isbn="+book.getIsbn(), Book.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().getTitle()).isEqualToIgnoringCase("Pinokio");
+        assertThat(response.getBody().getAuthor()).isEqualToIgnoringCase("Carl Collodi");
+        bookRepository.deleteAll();
+    }
+
+    @Test
+    public void getBookByIsbn_willgetStatusNotFound() {
+        ResponseEntity<Book> response = restTemplate.getForEntity("/api/books/book?isbn=12-23-12", Book.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
 }

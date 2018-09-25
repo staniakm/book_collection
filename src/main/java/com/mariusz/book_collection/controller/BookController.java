@@ -38,6 +38,17 @@ public class BookController {
         return new ResponseEntity<>(books, HttpStatus.OK);
     }
 
+    /***
+     * Fing book by isbn
+     * @param isbn - book isbn
+     * @return optional book
+     */
+    @GetMapping(value = "/book")
+    public ResponseEntity<Book> getBookByIsbn(@RequestParam(value = "isbn", required = false) String isbn){
+       return bookService.findBookByIsbn(isbn).map(book ->
+            new ResponseEntity<>(book, HttpStatus.OK)
+        ).orElseGet(()-> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
 
     @PostMapping(value = "")
     public ResponseEntity<Book> create(@RequestBody final Book book) {

@@ -28,6 +28,8 @@ public class Book {
     @JsonIgnore
     private Shelf shelf;
 
+    @Transient
+    private String isbnPattern = "([^\\d])+";
     public Book() {
     }
 
@@ -35,8 +37,13 @@ public class Book {
         this.id = id;
         this.title = title;
         this.author = author;
-        this.isbn = isbn;
+        this.isbn = isbn.replaceAll(isbnPattern,"");
         this.description = description;
+    }
+
+    public void setIsbn(String isbn){
+        if (isbn!=null)
+        this.isbn = isbn.replaceAll(isbnPattern,"");
     }
 
     @Override
