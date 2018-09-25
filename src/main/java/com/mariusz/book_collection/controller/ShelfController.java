@@ -24,12 +24,16 @@ public class ShelfController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<Shelf>> getAllShelfs(){
-        return new ResponseEntity<>(shelfService.getAllShelfs(), HttpStatus.OK);
+    public ResponseEntity<List<Shelf>> getAllShelfs() {
+        List<Shelf> shelfs = shelfService.getAllShelfs();
+        return shelfs.size() > 0
+                ? new ResponseEntity<>(shelfs, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Shelf> getShelf(@PathVariable("id") Long shelfId){
+    public ResponseEntity<Shelf> getShelf(@PathVariable("id") Long shelfId) {
         return shelfService
                 .findShelfById(shelfId)
                 .map(shelf -> new ResponseEntity<>(shelf, HttpStatus.OK))

@@ -14,6 +14,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -80,7 +81,6 @@ public class IntegrationTests {
 
 
     @Test
-
     public void getBooks_willNotFoundIfThereAreNoBooks() {
         ResponseEntity<List<Book>> response = restTemplate.exchange(
                 "/api/books/",
@@ -100,6 +100,7 @@ public class IntegrationTests {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody().getDescription()).isEqualToIgnoringCase("Bedroom");
+        shelfRepository.deleteAll();
     }
 
     @Test
@@ -149,8 +150,40 @@ public class IntegrationTests {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody().getAuthor()).isEqualToIgnoringCase(returnBook.getAuthor());
         bookRepository.deleteAll();
+    }
+
+    @Test
+    public void getShelfs_willReturnAllShelfs() {
+        Shelf shelf1 = new Shelf();
+        shelf1.setDescription("Bedroom");
+
+        Shelf shelf2 = new Shelf();
+        shelf2.setDescription("Living room");
+        shelfRepository.saveAll(Arrays.asList(shelf1, shelf2));
+
+        ResponseEntity<List<Shelf>> response = restTemplate.exchange(
+                "/api/shelfs/",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Shelf>>() {
+                });
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().size()).isEqualTo(2);
+        assertThat(response.getBody().contains(shelf1)).isTrue();
+        assertThat(response.getBody().contains(shelf2)).isTrue();
+        shelfRepository.deleteAll();
+    }
 
 
+    @Test
+    public void getBooks_willNotFoundIfThereAreNoShelfs() {
+        ResponseEntity<List<Shelf>> response = restTemplate.exchange(
+                "/api/shelfs/",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Shelf>>() {
+                });
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
 }
