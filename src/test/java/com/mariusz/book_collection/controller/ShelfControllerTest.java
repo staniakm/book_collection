@@ -124,9 +124,7 @@ public class ShelfControllerTest {
 
         //when
         mockMvc.perform(get("/api/shelfs"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$", hasSize(0)))
+                .andExpect(status().isNotFound());
         ;
 
         verify(shelfService, times(1)).getAllShelfs();
