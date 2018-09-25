@@ -58,19 +58,7 @@ public class BookServiceImplTest {
         newBookWithId.setId(3L);
 
         given(bookRepository.findById(1L)).willReturn(Optional.of(book));
-//        given(bookRepository.findById(2L)).willReturn(Optional.empty());
-
-//        when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
-//        when(bookRepository.findById(2L)).thenReturn(Optional.empty());
-
-
-
-//        when(bookRepository.findByIsbn("9788376489117")).thenReturn(Optional.of(book));
-//        when(bookRepository.findByIsbn("0000000000")).thenReturn(Optional.empty());
-//        when(bookRepository.findAll()).thenReturn(Arrays.asList(book,book2));
-
-
-        when(bookRepository.save(newBookWithoutId)).thenReturn(newBookWithId);
+        given(bookRepository.save(newBookWithoutId)).willReturn(newBookWithId);
 
     }
 
