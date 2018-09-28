@@ -63,6 +63,31 @@ public class BookServiceImplTest {
     }
 
     @Test
+    public void twoComparedBooksShouldBeEqualBasedOnId(){
+        Book book1 = new Book();
+        book1.setId(1L);
+
+        Book book2 = new Book();
+        book2.setId(1L);
+
+        assertThat(book1.hashCode()==book2.hashCode()).isTrue();
+    }
+
+    @Test
+    public void twoComparedBooksShouldBeEqualWithDifferentTitles(){
+        Book book1 = new Book();
+        book1.setTitle("Pinokio");
+        book1.setId(1L);
+
+        Book book2 = new Book();
+        book2.setTitle("Jaś i Małgosia");
+        book2.setId(1L);
+
+        assertThat(book1.hashCode()==book2.hashCode()).isTrue();
+    }
+
+
+    @Test
     public void shouldGetDataFromRepositoryWithOnlyOneRequest() {
         bookService.findBookById(1L);
         verify(bookRepository, times(1)).findById(1L);
