@@ -6,8 +6,11 @@ import com.mariusz.book_collection.entity.Shelf;
 import com.mariusz.book_collection.repository.AuthorRepository;
 import com.mariusz.book_collection.repository.BookRepository;
 import com.mariusz.book_collection.repository.ShelfRepository;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -39,6 +42,7 @@ public class IntegrationTests {
     private AuthorRepository authorRepository;
 
 
+
     @Test
     public void getBookById_willReturnBook() {
         Book book = new Book();
@@ -60,7 +64,6 @@ public class IntegrationTests {
     }
 
     @Test
-
     public void getBooks_willReturnAllBooks() {
         Book book = new Book();
         book.setTitle("Pinokio 2");
@@ -214,23 +217,55 @@ public class IntegrationTests {
 
     @Test
     public void getAuthorById_willReturnAuthor() {
-        Author author = new Author(1L, "Andrzej","Sapkowski");
+
+
+        Author author = new Author();
+        author.setFirstName("Andrzej");
+        author.setLastName("Sapkowski");
         authorRepository.save(author);
         ResponseEntity<Author> response = restTemplate
                 .getForEntity("/api/authors/"+author.getAuthorId(), Author.class);
+        authorRepository.deleteAll();
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody().getFirstName()).isEqualToIgnoringCase(author.getFirstName());
         assertThat(response.getBody().getLastName()).isEqualToIgnoringCase(author.getLastName());
-        bookRepository.deleteAll();
     }
 
     @Test
     public void getAuthorById_willReturnNotFoundStatus() {
+
         ResponseEntity<Author> response = restTemplate
                 .getForEntity("/api/authors/2", Author.class);
-
+        authorRepository.deleteAll();
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        bookRepository.deleteAll();
+    }
+
+    @Test
+    public void getAuthors_willReturnAllAuthors() {
+
+        Author author1 = new Author(1L, "Andrzej","Sapkowski");
+        Author author2 = new Author(2L, "Paolo","Coelio");
+        authorRepository.saveAll(Arrays.asList(author1,author2));
+
+        ResponseEntity<List<Author>> response = restTemplate
+                .exchange("/api/authors/",HttpMethod.GET,null,
+                    new ParameterizedTypeReference<List<Author>>() {});
+        authorRepository.deleteAll();
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().size()).isEqualTo(2);
+        assertThat(response.getBody().contains(author1)).isTrue();
+        assertThat(response.getBody().contains(author2)).isTrue();
+
+    }
+
+    @Test
+    public void getAllAuthors_willReturnNotFoundIfThereAreNoAuthors() {
+        ResponseEntity<List<Author>> response = restTemplate
+                .exchange("/api/authors/",HttpMethod.GET,null,
+                        new ParameterizedTypeReference<List<Author>>() {});
+        authorRepository.deleteAll();
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
     }
 }

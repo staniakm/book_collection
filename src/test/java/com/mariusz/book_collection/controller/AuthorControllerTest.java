@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mariusz.book_collection.entity.Author;
 import com.mariusz.book_collection.entity.Book;
 import com.mariusz.book_collection.service.AuthorService;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,15 +20,20 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AuthorControllerTest {
@@ -86,4 +92,24 @@ public class AuthorControllerTest {
     }
 
 
+    @Test
+    public void typedRequestShouldReturnAllAuthors() throws Exception {
+
+        //given
+        Author author1 = new Author(1L, "Andrzej","Sapkowski");
+        Author author2 = new Author(2L, "Paolo","Coelio");
+        given(authorService.findAll()).willReturn(Arrays.asList(author1,author2));
+
+        //when
+        mockMvc.perform(get("/api/authors"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].authorId", Matchers.is(1)))
+                .andExpect(jsonPath("$[0].firstName", Matchers.is("Andrzej")))
+                .andExpect(jsonPath("$[1].firstName", Matchers.is("Paolo")));
+
+        verify(authorService, times(1)).findAll();
+        verifyNoMoreInteractions(authorService);
+    }
 }
