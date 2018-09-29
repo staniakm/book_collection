@@ -1,7 +1,9 @@
 package com.mariusz.book_collection.integration;
 
+import com.mariusz.book_collection.entity.Author;
 import com.mariusz.book_collection.entity.Book;
 import com.mariusz.book_collection.entity.Shelf;
+import com.mariusz.book_collection.repository.AuthorRepository;
 import com.mariusz.book_collection.repository.BookRepository;
 import com.mariusz.book_collection.repository.ShelfRepository;
 import org.junit.Test;
@@ -32,6 +34,9 @@ public class IntegrationTests {
 
     @Autowired
     private ShelfRepository shelfRepository;
+
+    @Autowired
+    private AuthorRepository authorRepository;
 
 
     @Test
@@ -204,5 +209,28 @@ public class IntegrationTests {
     public void getBookByIsbn_willgetStatusNotFound() {
         ResponseEntity<Book> response = restTemplate.getForEntity("/api/books/book?isbn=12-23-12", Book.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+
+    @Test
+    public void getAuthorById_willReturnAuthor() {
+        Author author = new Author(1L, "Andrzej","Sapkowski");
+        authorRepository.save(author);
+        ResponseEntity<Author> response = restTemplate
+                .getForEntity("/api/authors/"+author.getAuthorId(), Author.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().getFirstName()).isEqualToIgnoringCase(author.getFirstName());
+        assertThat(response.getBody().getLastName()).isEqualToIgnoringCase(author.getLastName());
+        bookRepository.deleteAll();
+    }
+
+    @Test
+    public void getAuthorById_willReturnNotFoundStatus() {
+        ResponseEntity<Author> response = restTemplate
+                .getForEntity("/api/authors/2", Author.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        bookRepository.deleteAll();
     }
 }

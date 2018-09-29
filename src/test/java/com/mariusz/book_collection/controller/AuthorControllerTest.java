@@ -1,0 +1,89 @@
+package com.mariusz.book_collection.controller;
+
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mariusz.book_collection.entity.Author;
+import com.mariusz.book_collection.entity.Book;
+import com.mariusz.book_collection.service.AuthorService;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.verification.VerificationMode;
+import org.springframework.boot.test.json.JacksonTester;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
+@RunWith(MockitoJUnitRunner.class)
+public class AuthorControllerTest {
+
+    private MockMvc mockMvc;
+
+    @Mock
+    private AuthorService authorService;
+
+    @InjectMocks
+    private AuthorController authorController;
+
+    private JacksonTester<Author> jacksonTester;
+
+    @Before
+    public void setup() {
+        JacksonTester.initFields(this, new ObjectMapper());
+        mockMvc = MockMvcBuilders.standaloneSetup(authorController).build();
+    }
+
+    @Test
+    public void typedId_ShouldReturnSpecicAuthor() throws Exception {
+        //given
+        Author author = new Author(1L, "Andrzej","Sapkowski");
+        given(authorService.findAuthorById(anyLong()))
+                .willReturn(Optional.of(author));
+
+        //when
+        MockHttpServletResponse response = mockMvc
+                .perform(get("/api/authors/1")
+                        .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andReturn()
+                .getResponse();
+
+        //then
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getContentAsString())
+                .isEqualToIgnoringCase(jacksonTester.write(author).getJson());
+    }
+
+    @Test
+    public void typedId_ShouldReturnNotFoundStatus() throws Exception {
+        //given
+        given(authorService.findAuthorById(anyLong()))
+                .willReturn(Optional.empty());
+        //when
+        MockHttpServletResponse response = mockMvc
+                .perform(get("/api/authors/1")
+                        .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andReturn()
+                .getResponse();
+        //then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+        verify(authorService,times(1)).findAuthorById(anyLong());
+    }
+
+
+}

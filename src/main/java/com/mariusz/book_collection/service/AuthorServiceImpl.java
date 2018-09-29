@@ -3,11 +3,12 @@ package com.mariusz.book_collection.service;
 import com.mariusz.book_collection.entity.Author;
 import com.mariusz.book_collection.repository.AuthorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
+@Service
 public class AuthorServiceImpl implements AuthorService {
 
     private final AuthorRepository authorRepository;
