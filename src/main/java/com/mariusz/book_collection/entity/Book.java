@@ -18,7 +18,13 @@ public class Book {
     private Long id;
     @NotNull
     private String title;
-    private String author;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "author_id", nullable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    @JsonIgnore
+    private Author author;
+
     private String isbn;
     private String description;
 
@@ -33,10 +39,9 @@ public class Book {
     public Book() {
     }
 
-    public Book(Long id, @NotNull String title, String author, String isbn, String description) {
+    public Book(Long id, @NotNull String title, String isbn, String description) {
         this.id = id;
         this.title = title;
-        this.author = author;
         this.isbn = isbn.replaceAll(isbnPattern,"");
         this.description = description;
     }

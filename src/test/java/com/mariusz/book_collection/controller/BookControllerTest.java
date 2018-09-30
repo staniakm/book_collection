@@ -93,8 +93,8 @@ public class BookControllerTest {
     public void typedRequestShouldReturnAllBooks() throws Exception {
 
         //given
-        Book book1 = new Book(1L,"Pinokio","Annonymus", "312312423","Story about wooden boy.");
-        Book book2 = new Book(2L,"Martian","Annonymus", "322312423","Story about mars and a man.");
+        Book book1 = new Book(1L,"Pinokio","312312423","Story about wooden boy.");
+        Book book2 = new Book(2L,"Martian","322312423","Story about mars and a man.");
 
         //when
         when(bookService.findAllBooks()).thenReturn(new ArrayList<>(Arrays.asList(book1, book2)));
@@ -136,7 +136,6 @@ public class BookControllerTest {
         Book book = new Book();
         book.setId(1L);
         book.setTitle("Game of Throne");
-        book.setAuthor("Gorge RR Martin");
 
         given(bookService.saveOrUpdate(any(Book.class))).willReturn(book);
 
@@ -160,12 +159,10 @@ public class BookControllerTest {
         Book insertBook = new Book();
         insertBook.setId(1L);
         insertBook.setTitle("Game of Throne");
-        insertBook.setAuthor("Gorge RR Martin");
 
         Book returnBook = new Book();
         returnBook.setId(1L);
-        returnBook.setTitle("Game of Throne");
-        returnBook.setAuthor("Gorge R.R. Martin");
+        returnBook.setTitle("Game of Throne - Fire and Ice");
 
         given(bookService.saveOrUpdate(insertBook)).willReturn(returnBook);
 

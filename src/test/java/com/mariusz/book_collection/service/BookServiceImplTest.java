@@ -31,14 +31,12 @@ public class BookServiceImplTest {
         bookService = new BookServiceImpl(bookRepository);
 
         Book book = new Book();
-        book.setAuthor("Lee Carroll");
         book.setId(1L);
         book.setTitle("Królestwo czerwonego łabędzia");
         book.setDescription("Ludzie widzą tylko to co chcą widzieć. Zajrzyj głębiej...");
         book.setIsbn("9788376489117");
 
         Book book2 = new Book();
-        book2.setAuthor("Test Author");
         book2.setId(2L);
         book2.setTitle("Test title");
         book2.setDescription("Desctiption that will be tested...");
@@ -48,14 +46,11 @@ public class BookServiceImplTest {
         newBookWithoutId.setIsbn("1236547899");
         newBookWithoutId.setDescription("No id book");
         newBookWithoutId.setTitle("Book without ID");
-        newBookWithoutId.setAuthor("Test");
 
         Book newBookWithId = new Book();
-        newBookWithId.setAuthor(newBookWithoutId.getAuthor());
         newBookWithId.setDescription(newBookWithoutId.getDescription());
         newBookWithId.setTitle(newBookWithoutId.getTitle());
         newBookWithId.setIsbn(newBookWithoutId.getIsbn());
-        newBookWithId.setId(3L);
 
         given(bookRepository.findById(1L)).willReturn(Optional.of(book));
         given(bookRepository.save(newBookWithoutId)).willReturn(newBookWithId);
@@ -97,7 +92,6 @@ public class BookServiceImplTest {
     @Test
         public void shouldReturnBookWhenProvideCorrectIsbn() {
         Book book1 = new Book();
-        book1.setAuthor("Lee Carroll");
         book1.setId(1L);
         book1.setTitle("Królestwo czerwonego łabędzia");
         book1.setDescription("Ludzie widzą tylko to co chcą widzieć. Zajrzyj głębiej...");
@@ -111,7 +105,6 @@ public class BookServiceImplTest {
         Book book ;
         if (result.isPresent()) {
             book = result.get();
-            assertThat(book.getAuthor()).isEqualTo("Lee Carroll");
             assertThat(book.getId()).isEqualTo(1L);
             assertThat(book.getTitle()).isEqualTo("Królestwo czerwonego łabędzia");
             assertThat(book.getDescription()).isEqualTo("Ludzie widzą tylko to co chcą widzieć. Zajrzyj głębiej...");
@@ -125,7 +118,6 @@ public class BookServiceImplTest {
     @Test
     public void shouldReturnBookWhenProvideCorrectIsbnWithSeparatedDigits() {
         Book book1 = new Book();
-        book1.setAuthor("Lee Carroll");
         book1.setId(1L);
         book1.setTitle("Królestwo czerwonego łabędzia");
         book1.setDescription("Ludzie widzą tylko to co chcą widzieć. Zajrzyj głębiej...");
@@ -140,7 +132,6 @@ public class BookServiceImplTest {
         Book book ;
         if (result.isPresent()) {
             book = result.get();
-            assertThat(book.getAuthor()).isEqualTo("Lee Carroll");
             assertThat(book.getId()).isEqualTo(1L);
             assertThat(book.getIsbn()).isEqualTo("9788376489117");
         }
@@ -188,14 +179,12 @@ public class BookServiceImplTest {
     @Test
     public void shouldReturnListOfTwoElementsWhenGetAllMethodCalled(){
         Book book1 = new Book();
-        book1.setAuthor("Lee Carroll");
         book1.setId(1L);
         book1.setTitle("Królestwo czerwonego łabędzia");
         book1.setDescription("Ludzie widzą tylko to co chcą widzieć. Zajrzyj głębiej...");
         book1.setIsbn("9788376489117");
 
         Book book2 = new Book();
-        book2.setAuthor("Test Author");
         book2.setId(2L);
         book2.setTitle("Test title");
         book2.setDescription("Desctiption that will be tested...");
@@ -219,15 +208,22 @@ public class BookServiceImplTest {
         book.setIsbn("1236547899");
         book.setDescription("No id book");
         book.setTitle("Book without ID");
-        book.setAuthor("Test");
+
+        Book savedBook = new Book();
+        savedBook.setIsbn("1236547899");
+        savedBook.setDescription("No id book");
+        savedBook.setTitle("Book without ID");
+        savedBook.setId(1L);
+
+        given(bookRepository.save(book)).willReturn(savedBook);
         Book saved = bookService.saveOrUpdate(book);
+
 
         assertThat(book.getId()).isEqualTo(null);
         assertThat(saved!=null).isTrue();
         assertThat(saved.getId()!=null).isTrue();
 
         assertThat(book.getTitle()).isEqualTo(saved.getTitle());
-        assertThat(book.getAuthor()).isEqualTo(saved.getAuthor());
         assertThat(book.getDescription()).isEqualTo(saved.getDescription());
         assertThat(book.getIsbn()).isEqualTo(saved.getIsbn());
     }

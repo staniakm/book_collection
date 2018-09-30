@@ -113,7 +113,6 @@ public class ShelfRepositoryTest {
         book.setIsbn("1236547899");
         book.setDescription("No id book");
         book.setTitle("Book without ID");
-        book.setAuthor("Test");
         return book;
     }
 

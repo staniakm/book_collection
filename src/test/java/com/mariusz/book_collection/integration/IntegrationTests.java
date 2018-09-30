@@ -47,13 +47,11 @@ public class IntegrationTests {
     public void getBookById_willReturnBook() {
         Book book = new Book();
         book.setTitle("Pinokio");
-        book.setAuthor("Carl Collodi");
         bookRepository.save(book);
         ResponseEntity<Book> response = restTemplate.getForEntity("/api/books/"+book.getId(), Book.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody().getTitle()).isEqualToIgnoringCase("Pinokio");
-        assertThat(response.getBody().getAuthor()).isEqualToIgnoringCase("Carl Collodi");
         bookRepository.deleteAll();
     }
 
@@ -67,12 +65,10 @@ public class IntegrationTests {
     public void getBooks_willReturnAllBooks() {
         Book book = new Book();
         book.setTitle("Pinokio 2");
-        book.setAuthor("Carl Collodi");
         bookRepository.save(book);
 
         Book book2 = new Book();
         book2.setTitle("80 days around the world.");
-        book2.setAuthor("Jules Verne");
         bookRepository.save(book2);
         ResponseEntity<List<Book>> response = restTemplate.exchange(
                 "/api/books/",
@@ -136,12 +132,10 @@ public class IntegrationTests {
         //given
         Book insertBook = new Book();
         insertBook.setTitle("Game of Throne");
-        insertBook.setAuthor("Gorge RR Martin");
         bookRepository.save(insertBook);
 
         Book returnBook = new Book();
-        returnBook.setTitle("Game of Throne");
-        returnBook.setAuthor("Gorge R.R. Martin");
+        returnBook.setTitle("Game of Throne - Fire and Ice");
 
         HttpHeaders httpHeaders = restTemplate
                 .headForHeaders("/api/books/"+insertBook.getId());
@@ -154,7 +148,7 @@ public class IntegrationTests {
                 Book.class);
         //then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody().getAuthor()).isEqualToIgnoringCase(returnBook.getAuthor());
+        assertThat(response.getBody().getTitle()).isEqualToIgnoringCase(returnBook.getTitle());
         bookRepository.deleteAll();
     }
 
@@ -197,14 +191,12 @@ public class IntegrationTests {
     public void getBookByIsbn_willReturnBook() {
         Book book = new Book();
         book.setTitle("Pinokio");
-        book.setAuthor("Carl Collodi");
         book.setIsbn("123-456-789-0");
         bookRepository.save(book);
         ResponseEntity<Book> response = restTemplate.getForEntity("/api/books/book?isbn="+book.getIsbn(), Book.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody().getTitle()).isEqualToIgnoringCase("Pinokio");
-        assertThat(response.getBody().getAuthor()).isEqualToIgnoringCase("Carl Collodi");
         bookRepository.deleteAll();
     }
 
