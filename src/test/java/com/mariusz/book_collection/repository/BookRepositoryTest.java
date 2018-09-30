@@ -42,6 +42,7 @@ public class BookRepositoryTest {
 
         Book find = bookRepository.findById(testBookSavedInDb.getId()).orElse(new Book());
 
+        assertThat(find.getId()).isNotZero();
         assertThat(find.getId()).isEqualTo(testBookSavedInDb.getId());
         assertThat(find.getTitle()).isEqualTo("Book without ID");
         testEntityManager.flush();
