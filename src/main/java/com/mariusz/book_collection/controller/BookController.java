@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -35,6 +36,14 @@ public class BookController {
         if (books.size()==0){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        return new ResponseEntity<>(books, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/author")
+    public ResponseEntity<List<Book>> getAllBooksByAuthor(@RequestParam(value = "authorId", required = true) Long authorId){
+
+        List<Book> books = bookService.findBooksByAuthorId(authorId);
+
         return new ResponseEntity<>(books, HttpStatus.OK);
     }
 

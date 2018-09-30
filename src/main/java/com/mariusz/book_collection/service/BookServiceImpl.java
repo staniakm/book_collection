@@ -5,6 +5,7 @@ import com.mariusz.book_collection.entity.Shelf;
 import com.mariusz.book_collection.repository.BookRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,5 +45,10 @@ public class BookServiceImpl implements BookService {
     public Book putBookOnShelf(Book book, Shelf shelf) {
         book.setShelf(shelf);
         return bookRepository.save(book);
+    }
+
+    @Override
+    public List<Book> findBooksByAuthorId(Long authorId) {
+        return bookRepository.findAllByAuthor_AuthorId(authorId);
     }
 }

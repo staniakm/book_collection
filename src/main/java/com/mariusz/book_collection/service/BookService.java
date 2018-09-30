@@ -13,4 +13,6 @@ public interface BookService {
     List<Book> findAllBooks();
     Book saveOrUpdate(Book book);
     Book putBookOnShelf(Book book, Shelf shef);
+
+    List<Book> findBooksByAuthorId(Long authorId);
 }
