@@ -19,10 +19,10 @@ public class Book {
     @NotNull
     private String title;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @ManyToOne( optional = true)
     @JoinColumn(name = "author_id", nullable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
-    @JsonIgnore
+//    @JsonIgnore
     private Author author;
 
     private String isbn;

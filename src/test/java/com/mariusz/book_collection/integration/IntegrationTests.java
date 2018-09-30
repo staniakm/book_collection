@@ -56,6 +56,23 @@ public class IntegrationTests {
     }
 
     @Test
+    public void getBookById_willReturnBookWithAuthor() {
+        Book book = new Book();
+        Author author = new Author("Andrzej","Sapkowski");
+        book.setTitle("Pinokio");
+        book.setAuthor(author);
+        authorRepository.save(author);
+        bookRepository.save(book);
+        ResponseEntity<Book> response = restTemplate.getForEntity("/api/books/"+book.getId(), Book.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().getTitle()).isEqualToIgnoringCase("Pinokio");
+        assertThat(response.getBody().getAuthor().getFirstName()).isEqualTo(author.getFirstName());
+        bookRepository.deleteAll();
+        authorRepository.deleteAll();
+    }
+
+    @Test
     public void getBookById_willgetStatusNotFound() {
         ResponseEntity<Book> response = restTemplate.getForEntity("/api/books/221", Book.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -236,8 +253,8 @@ public class IntegrationTests {
     @Test
     public void getAuthors_willReturnAllAuthors() {
 
-        Author author1 = new Author(1L, "Andrzej","Sapkowski");
-        Author author2 = new Author(2L, "Paolo","Coelio");
+        Author author1 = new Author( "Andrzej","Sapkowski");
+        Author author2 = new Author( "Paolo","Coelio");
         authorRepository.saveAll(Arrays.asList(author1,author2));
 
         ResponseEntity<List<Author>> response = restTemplate
