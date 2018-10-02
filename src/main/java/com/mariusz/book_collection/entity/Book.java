@@ -22,7 +22,6 @@ public class Book {
     @ManyToOne( optional = true)
     @JoinColumn(name = "author_id", nullable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
-//    @JsonIgnore
     private Author author;
 
     private String isbn;
@@ -34,20 +33,18 @@ public class Book {
     @JsonIgnore
     private Shelf shelf;
 
-    @Transient
-    @JsonIgnore
-    private String isbnPattern = "([^\\d])+";
     public Book() {
     }
 
     public Book(Long id, @NotNull String title, String isbn, String description) {
         this.id = id;
         this.title = title;
-        this.isbn = isbn.replaceAll(isbnPattern,"");
+        setIsbn(isbn);
         this.description = description;
     }
 
     public void setIsbn(String isbn){
+        String isbnPattern = "([^\\d])+";
         if (isbn!=null)
         this.isbn = isbn.replaceAll(isbnPattern,"");
     }
