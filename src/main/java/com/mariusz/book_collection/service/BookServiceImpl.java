@@ -1,11 +1,13 @@
 package com.mariusz.book_collection.service;
 
+import com.mariusz.book_collection.entity.Author;
 import com.mariusz.book_collection.entity.Book;
 import com.mariusz.book_collection.entity.Shelf;
 import com.mariusz.book_collection.repository.BookRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,5 +52,10 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<Book> findBooksByAuthorId(Long authorId) {
         return bookRepository.findAllByAuthor_AuthorId(authorId);
+    }
+
+    @Override
+    public List<Book> findbookbyAuthor(Optional<Author> author) {
+        return author.map(bookRepository::findAllByAuthor).orElse(Collections.emptyList());
     }
 }

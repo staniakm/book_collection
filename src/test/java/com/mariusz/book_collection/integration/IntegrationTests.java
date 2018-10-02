@@ -138,6 +138,57 @@ public class IntegrationTests {
     }
 
     @Test
+    public void getBooksByAuthorName_willReturnAllBooksWithSpecifiedAuthor() {
+        Book book = new Book();
+        Author author = new Author("Jan","Kowalski");
+        Author author2 = new Author("Paweł","Nowak");
+        authorRepository.saveAll(Arrays.asList(author,author2));
+
+        book.setTitle("Pinokio 2");
+        book.setAuthor(author);
+        bookRepository.save(book);
+
+        Book book2 = new Book();
+        book2.setTitle("Przygody Tomka");
+        book2.setAuthor(author);
+        bookRepository.save(book2);
+
+        Book book3 = new Book();
+        book3.setTitle("80 days around the world.");
+        book3.setAuthor(author2);
+        bookRepository.save(book3);
+
+        ResponseEntity<List<Book>> response = restTemplate.exchange(
+                "/api/books/author?name="+author.getLastName(),
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Book>>() {
+                });
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().size()).isEqualTo(2);
+        assertThat(response.getBody().contains(book)).isTrue();
+        assertThat(response.getBody().contains(book2)).isTrue();
+        assertThat(response.getBody().contains(book3)).isFalse();
+        bookRepository.deleteAll();
+        authorRepository.deleteAll();
+    }
+
+    @Test
+    public void getBooksByAuthorWithoutParameters_willReturnEnmptyList() {
+
+        ResponseEntity<List<Book>> response = restTemplate.exchange(
+                "/api/books/author",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Book>>() {
+                });
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().size()).isEqualTo(0);
+        bookRepository.deleteAll();
+        authorRepository.deleteAll();
+    }
+
+    @Test
     public void getBooksByAuthor_willReturnEmptyListIfAuthodDontHaveBooks() {
         Author author = new Author("Jan","Kowalski");
         Author author2 = new Author("Paweł","Nowak");

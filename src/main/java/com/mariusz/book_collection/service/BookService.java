@@ -1,5 +1,6 @@
 package com.mariusz.book_collection.service;
 
+import com.mariusz.book_collection.entity.Author;
 import com.mariusz.book_collection.entity.Book;
 import com.mariusz.book_collection.entity.Shelf;
 
@@ -15,4 +16,6 @@ public interface BookService {
     Book putBookOnShelf(Book book, Shelf shef);
 
     List<Book> findBooksByAuthorId(Long authorId);
+
+    List<Book> findbookbyAuthor(Optional<Author> byLastName);
 }

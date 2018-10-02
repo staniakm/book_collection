@@ -1,13 +1,14 @@
 package com.mariusz.book_collection.controller;
 
 import com.mariusz.book_collection.entity.Book;
+import com.mariusz.book_collection.service.AuthorService;
 import com.mariusz.book_collection.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -16,10 +17,12 @@ public class BookController {
 
 
     private final BookService bookService;
+    private final AuthorService authorService;
 
     @Autowired
-    public BookController(BookService bookService) {
+    public BookController(BookService bookService, AuthorService authorService) {
         this.bookService = bookService;
+        this.authorService = authorService;
     }
 
     @GetMapping(value = "/{id}")
@@ -40,12 +43,17 @@ public class BookController {
     }
 
     @GetMapping(value = "/author")
-    public ResponseEntity<List<Book>> getAllBooksByAuthor(@RequestParam(value = "authorId", required = true) Long authorId){
-
-        List<Book> books = bookService.findBooksByAuthorId(authorId);
-
+    public ResponseEntity<List<Book>> getAllBooksByAuthor(@RequestParam(value = "authorId", required = false) Long authorId,
+                                                          @RequestParam(value = "name", required = false) String lastName){
+        List<Book> books=Collections.emptyList();
+        if (authorId!=null)
+            books = bookService.findBooksByAuthorId(authorId);
+        else if (lastName!=null){
+            books = bookService.findbookbyAuthor(authorService.findByLastName(lastName));
+        }
         return new ResponseEntity<>(books, HttpStatus.OK);
     }
+
 
     /***
      * Fing book by isbn
