@@ -35,6 +35,7 @@ public class Book {
     private Shelf shelf;
 
     @Transient
+    @JsonIgnore
     private String isbnPattern = "([^\\d])+";
     public Book() {
     }

@@ -2,6 +2,7 @@ package com.mariusz.book_collection.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mariusz.book_collection.config.BookJpaConfig;
 import com.mariusz.book_collection.entity.Author;
 import com.mariusz.book_collection.entity.Book;
 import com.mariusz.book_collection.service.AuthorService;
@@ -17,6 +18,9 @@ import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -36,6 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(MockitoJUnitRunner.class)
+@ActiveProfiles("test")
 public class AuthorControllerTest {
 
     private MockMvc mockMvc;
