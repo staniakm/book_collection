@@ -7,7 +7,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,7 +25,6 @@ public class AuthorServiceImplTest {
     @Mock
     private AuthorRepository authorRepository;
 
-    @Autowired
     private AuthorService authorService;
 
     @Before
@@ -46,7 +44,7 @@ public class AuthorServiceImplTest {
         Optional<Author> newAuthor = authorService.findAuthorById(1L);
 
         assertThat(newAuthor.isPresent()).isTrue();
-        assertThat(newAuthor.get().getFirstName()).isEqualTo(author.getFirstName());
+        assertThat( newAuthor.get().getFirstName()).isEqualTo(author.getFirstName());
         assertThat(newAuthor.get().getAuthorId()).isEqualTo(author.getAuthorId());
         verify(authorRepository, times(1)).findById(1L);
     }
@@ -94,24 +92,24 @@ public class AuthorServiceImplTest {
         author.setFirstName("Andrzej");
         author.setAuthorId(2L);
 
-        given(authorRepository.findAuthorByLastName(anyString())).willReturn(Optional.of(author));
+        given(authorRepository.findAllByLastName(anyString())).willReturn(Collections.singletonList(author));
 
-        Optional<Author> newAuthor = authorService.findByLastName(author.getLastName());
+        List<Author> newAuthor = authorService.findByLastName(author.getLastName());
 
-        assertThat(newAuthor.isPresent()).isTrue();
-        assertThat(newAuthor.get().getFirstName()).isEqualTo(author.getFirstName());
-        assertThat(newAuthor.get().getAuthorId()).isEqualTo(author.getAuthorId());
-        verify(authorRepository, times(1)).findAuthorByLastName(anyString());
+        assertThat(newAuthor.contains(author)).isTrue();
+        assertThat(newAuthor.get(0).getFirstName()).isEqualTo(author.getFirstName());
+        assertThat(newAuthor.get(0).getAuthorId()).isEqualTo(author.getAuthorId());
+        verify(authorRepository, times(1)).findAllByLastName(anyString());
     }
 
     @Test
     public void getAuthorByLastName_shouldReturnOptionalEmpty(){
-        given(authorRepository.findAuthorByLastName(anyString())).willReturn(Optional.empty());
+        given(authorRepository.findAllByLastName(anyString())).willReturn(Collections.emptyList());
 
-        Optional<Author> newAuthor = authorService.findByLastName("author name");
+        List<Author> newAuthor = authorService.findByLastName("author name");
 
-        assertThat(newAuthor.isPresent()).isFalse();
-        verify(authorRepository, times(1)).findAuthorByLastName(anyString());
+        assertThat(newAuthor.isEmpty()).isTrue();
+        verify(authorRepository, times(1)).findAllByLastName(anyString());
     }
 
 

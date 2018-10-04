@@ -9,6 +9,6 @@ public interface AuthorService {
 
     Optional<Author> findAuthorById(Long authorId);
     List<Author> findAll();
-    Optional<Author> findByLastName(String lastName);
+    List<Author> findByLastName(String lastName);
 
 }

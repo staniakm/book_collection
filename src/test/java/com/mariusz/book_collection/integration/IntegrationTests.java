@@ -9,8 +9,6 @@ import com.mariusz.book_collection.repository.ShelfRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -183,13 +181,11 @@ public void setUp(){
 
     @Test
     public void getBooksByAuthorName_willReturnAllBooksForAllFoundAuthors() {
-        bookRepository.deleteAll();
-        authorRepository.deleteAll();
         Book book = new Book();
         Author author = new Author("Jan","Kowalski");
         Author author2 = new Author("Paweł","Kowalski");
         Author author3 = new Author("Paweł","Nowak");
-        authorRepository.saveAll(Arrays.asList(author,author2));
+        authorRepository.saveAll(Arrays.asList(author,author2, author3));
 
         book.setTitle("Pinokio 2");
         book.setAuthor(author);

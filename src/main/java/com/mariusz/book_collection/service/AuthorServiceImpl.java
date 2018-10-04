@@ -5,7 +5,6 @@ import com.mariusz.book_collection.repository.AuthorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 @Service
@@ -29,7 +28,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public Optional<Author> findByLastName(String lastName) {
-        return authorRepository.findAuthorByLastName(lastName);
+    public List<Author> findByLastName(String lastName) {
+        return authorRepository.findAllByLastName(lastName);
     }
 }
