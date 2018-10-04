@@ -58,4 +58,9 @@ public class BookServiceImpl implements BookService {
     public List<Book> findbookbyAuthor(Optional<Author> author) {
         return author.map(bookRepository::findAllByAuthor).orElse(Collections.emptyList());
     }
+
+    @Override
+    public List<Book> findBookByTitle(String title) {
+        return bookRepository.findAllByTitleIgnoreCaseContains(title);
+    }
 }

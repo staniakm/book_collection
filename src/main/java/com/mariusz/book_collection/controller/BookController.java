@@ -3,6 +3,7 @@ package com.mariusz.book_collection.controller;
 import com.mariusz.book_collection.entity.Book;
 import com.mariusz.book_collection.service.AuthorService;
 import com.mariusz.book_collection.service.BookService;
+import org.omg.CORBA.RepositoryIdHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,6 +52,12 @@ public class BookController {
         else if (lastName!=null){
             books = bookService.findbookbyAuthor(authorService.findByLastName(lastName));
         }
+        return new ResponseEntity<>(books, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/search")
+    public ResponseEntity<List<Book>> getBooksByTitle(@RequestParam(value = "title", required = true) String title){
+        List<Book> books = bookService.findBookByTitle(title);
         return new ResponseEntity<>(books, HttpStatus.OK);
     }
 

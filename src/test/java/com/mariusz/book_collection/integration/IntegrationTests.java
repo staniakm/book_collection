@@ -21,6 +21,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,7 +43,12 @@ public class IntegrationTests {
     @Autowired
     private AuthorRepository authorRepository;
 
-
+@Before
+public void setUp(){
+    bookRepository.deleteAll();
+    authorRepository.deleteAll();
+    shelfRepository.deleteAll();
+}
 
     @Test
     public void getBookById_willReturnBook() {
@@ -139,6 +145,8 @@ public class IntegrationTests {
 
     @Test
     public void getBooksByAuthorName_willReturnAllBooksWithSpecifiedAuthor() {
+        bookRepository.deleteAll();
+        authorRepository.deleteAll();
         Book book = new Book();
         Author author = new Author("Jan","Kowalski");
         Author author2 = new Author("Paweł","Nowak");
@@ -174,8 +182,93 @@ public class IntegrationTests {
     }
 
     @Test
-    public void getBooksByAuthorWithoutParameters_willReturnEnmptyList() {
+    public void getBooksByAuthorName_willReturnAllBooksForAllFoundAuthors() {
+        bookRepository.deleteAll();
+        authorRepository.deleteAll();
+        Book book = new Book();
+        Author author = new Author("Jan","Kowalski");
+        Author author2 = new Author("Paweł","Kowalski");
+        Author author3 = new Author("Paweł","Nowak");
+        authorRepository.saveAll(Arrays.asList(author,author2));
 
+        book.setTitle("Pinokio 2");
+        book.setAuthor(author);
+        bookRepository.save(book);
+
+        Book book2 = new Book();
+        book2.setTitle("Przygody Tomka");
+        book2.setAuthor(author2);
+        bookRepository.save(book2);
+
+        Book book3 = new Book();
+        book3.setTitle("80 days around the world.");
+        book3.setAuthor(author3);
+        bookRepository.save(book3);
+
+        ResponseEntity<List<Book>> response = restTemplate.exchange(
+                "/api/books/author?name=Kowalski",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Book>>() {
+                });
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().size()).isEqualTo(2);
+        assertThat(response.getBody().contains(book)).isTrue();
+        assertThat(response.getBody().contains(book2)).isTrue();
+        assertThat(response.getBody().contains(book3)).isFalse();
+        bookRepository.deleteAll();
+        authorRepository.deleteAll();
+    }
+
+    @Test
+    public void getBooksByPartOfTitle_willReturnAllBooksContainsSearchedSentence() {
+        bookRepository.deleteAll();
+        authorRepository.deleteAll();
+        Author author = new Author("Jan","Kowalski");
+        authorRepository.saveAll(Collections.singletonList(author));
+
+
+        Book book = new Book();
+        book.setTitle("Pinikio.");
+        book.setAuthor(author);
+        bookRepository.save(book);
+
+        Book book1 = new Book();
+        book1.setTitle("Powrót Zwiadowcy.");
+        book1.setAuthor(author);
+        bookRepository.save(book1);
+
+        Book book2 = new Book();
+        book2.setTitle("Zwiad. Nowa nadzieja.");
+        book2.setAuthor(author);
+        bookRepository.save(book2);
+
+        Book book3 = new Book();
+        book3.setTitle("Zwiadowcy. Wyprawa.");
+        book3.setAuthor(author);
+        bookRepository.save(book3);
+
+        ResponseEntity<List<Book>> response = restTemplate.exchange(
+                "/api/books/search?title=zwIaD",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Book>>() {
+                });
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().size()).isEqualTo(3);
+        System.out.println(response.getBody().get(0).toString());
+
+        assertThat(response.getBody().contains(book1)).isTrue();
+        assertThat(response.getBody().contains(book2)).isTrue();
+        assertThat(response.getBody().contains(book3)).isTrue();
+        assertThat(response.getBody().contains(book)).isFalse();
+
+    }
+
+    @Test
+    public void getBooksByAuthorWithoutParameters_willReturnEnmptyList() {
+        bookRepository.deleteAll();
+        authorRepository.deleteAll();
         ResponseEntity<List<Book>> response = restTemplate.exchange(
                 "/api/books/author",
                 HttpMethod.GET,
@@ -225,6 +318,7 @@ public class IntegrationTests {
 
     @Test
     public void getBooks_willNotFoundIfThereAreNoBooks() {
+        bookRepository.deleteAll();
         ResponseEntity<List<Book>> response = restTemplate.exchange(
                 "/api/books/",
                 HttpMethod.GET,
@@ -348,15 +442,15 @@ public class IntegrationTests {
 
     @Test
     public void getAuthorById_willReturnAuthor() {
-
-
+        bookRepository.deleteAll();
+        authorRepository.deleteAll();
         Author author = new Author();
         author.setFirstName("Andrzej");
         author.setLastName("Sapkowski");
         authorRepository.save(author);
         ResponseEntity<Author> response = restTemplate
                 .getForEntity("/api/authors/"+author.getAuthorId(), Author.class);
-        authorRepository.deleteAll();
+
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody().getFirstName()).isEqualToIgnoringCase(author.getFirstName());

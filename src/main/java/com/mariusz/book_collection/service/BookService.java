@@ -18,4 +18,6 @@ public interface BookService {
     List<Book> findBooksByAuthorId(Long authorId);
 
     List<Book> findbookbyAuthor(Optional<Author> byLastName);
+
+    List<Book> findBookByTitle(String title);
 }
