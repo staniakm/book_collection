@@ -24,6 +24,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
@@ -58,17 +59,12 @@ public class AuthorControllerTest {
                 .willReturn(Optional.of(author));
 
         //when
-        MockHttpServletResponse response = mockMvc
+        mockMvc
                 .perform(get("/api/authors/1")
                         .accept(MediaType.APPLICATION_JSON_UTF8))
-                .andReturn()
-                .getResponse();
-
-        //then
-
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-        assertThat(response.getContentAsString())
-                .isEqualToIgnoringCase(jacksonTester.write(author).getJson());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.firstName", is("Andrzej")))
+                .andExpect(jsonPath("$.lastName", is("Sapkowski")));
     }
 
     @Test
@@ -77,13 +73,11 @@ public class AuthorControllerTest {
         given(authorService.findAuthorById(anyLong()))
                 .willReturn(Optional.empty());
         //when
-        MockHttpServletResponse response = mockMvc
+        mockMvc
                 .perform(get("/api/authors/1")
                         .accept(MediaType.APPLICATION_JSON_UTF8))
-                .andReturn()
-                .getResponse();
+                .andExpect(status().isNotFound());
         //then
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
         verify(authorService,times(1)).findAuthorById(anyLong());
     }
 
@@ -103,9 +97,12 @@ public class AuthorControllerTest {
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].authorId", Matchers.is(1)))
                 .andExpect(jsonPath("$[0].firstName", Matchers.is("Andrzej")))
+                .andExpect(jsonPath("$[1].authorId", Matchers.is(2)))
                 .andExpect(jsonPath("$[1].firstName", Matchers.is("Paolo")));
 
         verify(authorService, times(1)).findAll();
         verifyNoMoreInteractions(authorService);
     }
+
+
 }
