@@ -1,7 +1,9 @@
 package com.mariusz.book_collection.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mariusz.book_collection.entity.Author;
 import com.mariusz.book_collection.entity.Book;
+import com.mariusz.book_collection.service.AuthorService;
 import com.mariusz.book_collection.service.BookService;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -19,12 +21,16 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isEmptyString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willReturn;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -36,6 +42,9 @@ public class BookControllerTest {
 
     @Mock
     private BookService bookService;
+
+    @Mock
+    private AuthorService authorService;
 
     @InjectMocks
     private BookController bookController;
@@ -180,6 +189,57 @@ public class BookControllerTest {
                 .isEqualTo(jacksonTester.write(returnBook).getJson());
     }
 
+    @Test
+    public void shouldReturnBookByValidIsbn() throws Exception {
 
+        given(bookService.findBookByIsbn("123456789")).willReturn(Optional.of(new Book(1L, "Pinokio", "123456789", "")));
 
+        mockMvc.perform(get("/api/books/book?isbn=123456789").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title",is("Pinokio")))
+                .andExpect(jsonPath("$.isbn",is("123456789")));
+    }
+
+    @Test
+    public void shouldReturnBooksListByPartTitle() throws Exception {
+
+        given(bookService.findBookByTitle(anyString())).willReturn(Collections.singletonList(new Book(1L, "Powrót zwiadowcy","","")));
+
+        mockMvc.perform(get("/api/books/search?title=zwiad").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].title", is("Powrót zwiadowcy")));
+    }
+
+    @Test
+    public void shouldReturnEmptyList() throws Exception {
+
+        given(bookService.findBookByTitle(anyString())).willReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/api/books/search?title=zwiad").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string("[]"));
+    }
+
+    @Test
+    public void shouldReturnBooksListByAuthorId() throws Exception {
+        Book book = new Book(1L, "Powrót zwiadowcy","","");
+
+        given(bookService.findBooksByAuthorId(1L)).willReturn(Collections.singletonList(book));
+
+        mockMvc.perform(get("/api/books/author?authorId=1").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].title", is("Powrót zwiadowcy")));
+    }
+
+    @Test
+    public void shouldReturnBooksListByAuthorName() throws Exception {
+        Book book = new Book(1L, "Powrót zwiadowcy","","");
+
+        given(authorService.findByLastName(anyString())).willReturn(Collections.singletonList(new Author(1L, "Andrzej", "Sapkowski")));
+        given(bookService.findBookByAuthors(anyList())).willReturn(Collections.singletonList(book));
+
+        mockMvc.perform(get("/api/books/author?name=sapkowski").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].title", is("Powrót zwiadowcy")));
+    }
 }
