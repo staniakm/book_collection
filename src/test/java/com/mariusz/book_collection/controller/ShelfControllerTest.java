@@ -115,7 +115,7 @@ public class ShelfControllerTest {
     }
 
     @Test
-    public void typedRequestShouldReturnEmptyList() throws Exception {
+    public void typedRequestShouldReturnNotFoundIfListIsEmpty() throws Exception {
 
         //given
 
