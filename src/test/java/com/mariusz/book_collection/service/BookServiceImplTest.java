@@ -1,6 +1,7 @@
 package com.mariusz.book_collection.service;
 
 
+import com.mariusz.book_collection.entity.Author;
 import com.mariusz.book_collection.entity.Book;
 import com.mariusz.book_collection.entity.Shelf;
 import com.mariusz.book_collection.repository.BookRepository;
@@ -12,6 +13,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -269,8 +271,55 @@ public class BookServiceImplTest {
 
         assertThat(bookOnShelf.getTitle()).isEqualToIgnoringCase("Pinokio");
         assertThat(bookOnShelf.getShelf().getDescription()).isEqualToIgnoringCase("Bedroom");
-
     }
 
+    @Test
+    public void shouldReturnListOfBooksByAuthorId() {
+        Book book = new Book();
+        book.setId(1L);
+        book.setTitle("Pinokio");
 
+        given(bookRepository.findAllByAuthor_AuthorId(anyLong())).willReturn(Collections.singletonList(book));
+
+        List<Book> books = bookService.findBooksByAuthorId(1L);
+
+        assertThat(books.size()).isEqualTo(1);
+        assertThat(books.contains(book)).isTrue();
+        verify(bookRepository,times(1)).findAllByAuthor_AuthorId(1L);
+    }
+
+    @Test
+    public void souldReturnListOfBooksForListOfAuthors() {
+        Book book = new Book();
+        book.setId(1L);
+        book.setTitle("Pinokio");
+        Book book2 = new Book();
+        book2.setId(2L);
+        book2.setTitle("Lord of the Rings");
+
+        given(bookRepository.findAllByAuthorIn(anyList())).willReturn(Arrays.asList(book,book2));
+
+        List<Book> books = bookService.findBookByAuthors(Collections.singletonList(new Author()));
+
+        assertThat(books.size()).isEqualTo(2);
+        assertThat(books.contains(book)).isTrue();
+        assertThat(books.contains(book2)).isTrue();
+
+        verify(bookRepository, times(1)).findAllByAuthorIn(anyList());
+    }
+
+    @Test
+    public void shouldReturnListOfBooksByPartOfTitle() {
+        Book book = new Book();
+        book.setId(1L);
+        book.setTitle("Pinokio");
+
+        given(bookRepository.findAllByTitleIgnoreCaseContains(anyString())).willReturn(Collections.singletonList(book));
+
+        List<Book> books = bookService.findBookByTitle("Pin");
+        assertThat(books.size()).isEqualTo(1);
+        assertThat(books.contains(book)).isTrue();
+
+        verify(bookRepository, times(1)).findAllByTitleIgnoreCaseContains(anyString());
+    }
 }
