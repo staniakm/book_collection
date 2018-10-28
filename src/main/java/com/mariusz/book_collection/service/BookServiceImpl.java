@@ -6,13 +6,17 @@ import com.mariusz.book_collection.entity.Shelf;
 import com.mariusz.book_collection.repository.BookRepository;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
+    private Book book;
 
     public BookServiceImpl(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
@@ -60,5 +64,26 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<Book> findBookByTitle(String title) {
         return bookRepository.findAllByTitleIgnoreCaseContains(title);
+    }
+
+    @Override
+    public void saveOrUpdate(Map<String, Object> updates, Long id) {
+        Optional<Book> newBook = bookRepository.findById(id);
+
+        if (newBook.isPresent()){
+            book = newBook.get();
+            for (Map.Entry<String, Object> value: updates.entrySet()
+                 ) {
+                try {
+                    Field field = book.getClass().getDeclaredField(value.getKey());
+                    field.setAccessible(true);
+                    field.set(book, value.getValue());
+                    field.setAccessible(false);
+                } catch (IllegalAccessException | NoSuchFieldException e) {
+                    //do nothing here
+                }
+            }
+            bookRepository.save(book);
+        }
     }
 }

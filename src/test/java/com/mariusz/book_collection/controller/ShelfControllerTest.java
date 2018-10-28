@@ -117,12 +117,8 @@ public class ShelfControllerTest {
     @Test
     public void typedRequestShouldReturnNotFoundIfListIsEmpty() throws Exception {
 
-        //given
-
-        //when
         when(shelfService.getAllShelfs()).thenReturn(new ArrayList<>());
 
-        //when
         mockMvc.perform(get("/api/shelfs"))
                 .andExpect(status().isNotFound());
         ;
