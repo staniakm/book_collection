@@ -1,4 +1,4 @@
-package com.mariusz.book_collection.controller;
+package com.mariusz.book_collection.controllerRest;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(MockitoJUnitRunner.class)
 @ActiveProfiles("test")
-public class AuthorControllerTest {
+public class AuthorRestControllerTest {
 
     private MockMvc mockMvc;
 
@@ -38,14 +38,14 @@ public class AuthorControllerTest {
     private AuthorService authorService;
 
     @InjectMocks
-    private AuthorController authorController;
+    private AuthorRestController authorRestController;
 
     private JacksonTester<Author> jacksonTester;
 
     @Before
     public void setup() {
         JacksonTester.initFields(this, new ObjectMapper());
-        mockMvc = MockMvcBuilders.standaloneSetup(authorController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(authorRestController).build();
     }
 
     @Test

@@ -2,12 +2,13 @@ package com.mariusz.book_collection.service;
 
 import com.mariusz.book_collection.entity.Author;
 import com.mariusz.book_collection.entity.Book;
+import com.mariusz.book_collection.entity.BookForm;
 import com.mariusz.book_collection.entity.Shelf;
+import com.mariusz.book_collection.mapper.BookFormMapper;
 import com.mariusz.book_collection.repository.BookRepository;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -16,10 +17,12 @@ import java.util.Optional;
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
+    private final BookFormMapper bookFormMapper;
     private Book book;
 
-    public BookServiceImpl(BookRepository bookRepository) {
+    public BookServiceImpl(BookRepository bookRepository, BookFormMapper bookFormMapper) {
         this.bookRepository = bookRepository;
+        this.bookFormMapper = bookFormMapper;
     }
 
     @Override
@@ -43,6 +46,13 @@ public class BookServiceImpl implements BookService {
     @Override
     public Book saveOrUpdate(Book book) {
         return bookRepository.save(book);
+    }
+
+    @Override
+    public Book saveOrUpdate(Long bookId, BookForm bookForm) {
+        Optional<Book> existingBook = bookRepository.findById(bookId);
+        Book updatedBook = bookFormMapper.updateBook(existingBook.get(), bookForm);
+        return bookRepository.save(updatedBook);
     }
 
     @Override
@@ -85,5 +95,16 @@ public class BookServiceImpl implements BookService {
             }
             bookRepository.save(book);
         }
+    }
+
+    @Override
+    public Book addNewBook(BookForm bookForm) {
+        Book book = bookFormMapper.mapToBook(bookForm);
+        return bookRepository.save(book);
+    }
+
+    @Override
+    public Optional<BookForm> findBookFormById(Long bookId) {
+        return bookFormMapper.mapToForm(bookRepository.findById(bookId));
     }
 }

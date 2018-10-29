@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+    <title>Book details</title>
+</head>
+<body>
+<H1>Detailed book info</H1>
+<h4 th:text="${book.getTitle()}"></h4>
+
+<ul>
+    <li th:text="'ID: ' + ${book.getId()}">id</li>
+    <li th:if="${book.getAuthor()!=null}" th:text="'Author: '+ ${book.getAuthor().getFirstName()} + ' '+ ${book.getAuthor().getLastName()}">author</li>
+    <li th:text="'ISBN: '+${book.getIsbn()}?:''" >ISBN</li>
+    <li th:if="${book.getDescription()!=null}" th:utext="'Description: ' +${book.getDescription()}">description</li>
+    <li th:unless="${book.getDescription()!=null}" th:text="'Description: '">description</li>
+    <li th:if="${book.getShelf()!=null}" th:text="'Shelf: '+ ${book.getShelf().getDescription()}">shelf id</li>
+    <li th:unless="${book.getShelf()!=null}" th:text="'Shelf: '">shelf id</li>
+</ul>
+<br/>
+<hr>
+<a th:href="@{/books/bookList}" class="btn btn-primary btn-sm active" role="button"
+   aria-pressed="true" >Book List</a>
+</body>
+</html>

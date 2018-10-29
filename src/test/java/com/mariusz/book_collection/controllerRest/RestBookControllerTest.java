@@ -1,4 +1,4 @@
-package com.mariusz.book_collection.controller;
+package com.mariusz.book_collection.controllerRest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mariusz.book_collection.entity.Author;
@@ -27,7 +27,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isEmptyString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willReturn;
@@ -36,7 +35,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class BookControllerTest {
+public class RestBookControllerTest {
 
     private MockMvc mockMvc;
 
@@ -47,14 +46,14 @@ public class BookControllerTest {
     private AuthorService authorService;
 
     @InjectMocks
-    private BookController bookController;
+    private RestBookController restBookController;
 
     private JacksonTester<Book>jacksonTester;
 
     @Before
     public void setup() {
         JacksonTester.initFields(this, new ObjectMapper());
-        mockMvc = MockMvcBuilders.standaloneSetup(bookController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(restBookController).build();
     }
 
     @Test

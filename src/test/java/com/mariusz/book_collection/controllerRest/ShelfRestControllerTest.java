@@ -1,4 +1,4 @@
-package com.mariusz.book_collection.controller;
+package com.mariusz.book_collection.controllerRest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mariusz.book_collection.entity.Shelf;
@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ShelfControllerTest {
+public class ShelfRestControllerTest {
 
     private MockMvc mockMvc;
 
@@ -39,14 +39,14 @@ public class ShelfControllerTest {
     private ShelfService shelfService;
 
     @InjectMocks
-    private ShelfController shelfController;
+    private ShelfRestController shelfRestController;
 
     private JacksonTester<Shelf> jacksonTester;
 
     @Before
     public void setup() {
         JacksonTester.initFields(this, new ObjectMapper());
-        mockMvc = MockMvcBuilders.standaloneSetup(shelfController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(shelfRestController).build();
     }
 
     @Test

@@ -2,6 +2,7 @@ package com.mariusz.book_collection.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.ToString;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -11,6 +12,7 @@ import java.util.Objects;
 
 @Entity
 @Data
+@ToString
 public class Book {
 
     @Id

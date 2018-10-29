@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+    <title>Book details</title>
+</head>
+<body>
+<H1>Detailed book info</H1>
+<h4 th:text="${bookForm.getTitle()}"></h4>
+
+<form class="new_wallet" id="new_wallet" th:action="@{/books/{id}/save(id=${bookForm.getId()})}" th:object="${bookForm}" th:method="put" accept-charset="UTF-8">
+    <ul style="width: 40%">
+        <li >
+            <label for="book_title">
+                <span th:text="'Book title'">...</span>
+            </label>
+            <br>
+            <input style="width: 100%" type="text" th:name="title" th:value="${bookForm.getTitle()}" id="book_title" required/>
+        </li>
+        <li >
+            <label for='book_isbn' >
+                <span th:text="'Book ISBN'"/>
+            </label>
+            <br>
+            <input style="width: 100%" type="text" th:name="isbn" th:value="${bookForm.getIsbn()}" name="book_isbn" id="book_isbn"/>
+        </li>
+        <li >
+            <label for="book_description">
+                <span th:text="'Book description'"/>
+            </label>
+            <br>
+            <input style="width: 100%" type="text" th:name="description" th:value="${bookForm.getDescription()}" name="book_description" id="book_description"/>
+        </li>
+        <li></li>  <button th:text="'Save new book'" type='submit'>
+    </button></ul>
+    </ul>
+</form>
+
+</body>
+</html>

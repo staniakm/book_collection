@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+    <title>Book List</title>
+</head>
+<body>
+<H1>Book list:</H1>
+<div class="book_list">
+    <table>
+        <thead>
+        <tr>
+            <th style="width: 5%" th:text="'ID.'">ID</th>
+            <th style="width: 20%" th:text="'Title'">Title</th>
+            <th style="width: 20%" th:text="'ISBN'">ISBN</th>
+            <th style="width: 20%" th:text="'Details'">ISBN</th>
+            <th style="width: 20%" th:text="'Edit'">ISBN</th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="field : ${books}">
+
+            <tr>
+                <td th:text="${field.getId()}">100</td>
+                <td th:text="${field.getTitle()}">A Smoke Test'</td>
+                <td th:text="${field.getIsbn()}">A Smoke Test'</td>
+                <td>
+                    <a th:href="@{'/books/'+${field.getId()}}" class="btn btn-secondary btn-sm active" role="button"
+                       th:text="'Show details'">...</a>
+                </td>
+                <td><a th:href="@{'/books/'+${field.getId()}+'/edit'}" class="btn btn-secondary btn-sm active"
+                       role="button"
+                       th:text="'Edit'">...</a>
+                </td>
+
+            </tr>
+
+        </th:block>
+        </tbody>
+    </table>
+</div>
+<br/>
+<hr>
+
+<a th:href="@{'/books/addBook'}" class="btn btn-secondary btn-sm active" role="button"
+   th:text="'Add new book'">...</a>
+
+</body>
+</html>

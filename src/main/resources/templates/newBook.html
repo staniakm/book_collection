@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="item content">
+    <h1>Add new book</h1>
+    <form class="new_wallet" id="new_wallet" th:action="@{/books/addBook}" th:object="${bookForm}" method="POST" accept-charset="UTF-8">
+        <ul style="width: 40%">
+            <li >
+                <label for="book_title">
+                    <span th:text="'Book title'">...</span>
+                </label>
+                <br>
+                <input style="width: 100%" type="text" th:field="*{title}" id="book_title" required/>
+            </li>
+            <li >
+                <label for='book_isbn' >
+                    <span th:text="'Book ISBN'"/>
+                </label>
+                <br>
+                <input style="width: 100%" type="text" th:field="*{isbn}" name="book_isbn" id="book_isbn"/>
+            </li>
+            <li >
+                <label for="book_description">
+                    <span th:text="'Book description'"/>
+                </label>
+                <br>
+                <input style="width: 100%" type="text" th:field="*{description}" name="book_description" id="book_description"/>
+                <!--<div class="form-group blu-margin" style="width: 100%">-->
+                    <!--<select id="money_container" class="form-control" th:field="*{moneyHolderType}" name="money_holder" required>-->
+                        <!--<option value="" selected disabled hidden ></option>-->
+                        <!--<option th:each="operator : ${operators}" th:value="${operator.name()}" th:text="${operator.getType()}"></option>-->
+                    <!--</select>-->
+                <!--</div>-->
+            </li>
+
+            <li></li>  <button th:text="'Save new book'" type='submit'>
+        </button></ul>
+        </ul>
+    </form>
+</div>
+</body>
+</html>

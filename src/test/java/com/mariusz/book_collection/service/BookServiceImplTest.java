@@ -4,6 +4,7 @@ package com.mariusz.book_collection.service;
 import com.mariusz.book_collection.entity.Author;
 import com.mariusz.book_collection.entity.Book;
 import com.mariusz.book_collection.entity.Shelf;
+import com.mariusz.book_collection.mapper.BookFormMapper;
 import com.mariusz.book_collection.repository.BookRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,7 +12,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -28,9 +28,12 @@ public class BookServiceImplTest {
     @Mock
     private BookRepository bookRepository;
 
+    @Mock
+    private BookFormMapper bookFormMapper;
+
     @Before
     public void setup() {
-        bookService = new BookServiceImpl(bookRepository);
+        bookService = new BookServiceImpl(bookRepository, bookFormMapper);
 
         Book book = new Book();
         book.setId(1L);

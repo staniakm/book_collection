@@ -1,4 +1,4 @@
-package com.mariusz.book_collection.controller;
+package com.mariusz.book_collection.controllerRest;
 
 import com.mariusz.book_collection.entity.Shelf;
 import com.mariusz.book_collection.service.ShelfService;
@@ -14,12 +14,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "api/shelfs")
-public class ShelfController {
+public class ShelfRestController {
 
     private final ShelfService shelfService;
 
     @Autowired
-    public ShelfController(ShelfService shelfService) {
+    public ShelfRestController(ShelfService shelfService) {
         this.shelfService = shelfService;
     }
 

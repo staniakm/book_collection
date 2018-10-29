@@ -1,11 +1,10 @@
-package com.mariusz.book_collection.controller;
+package com.mariusz.book_collection.controllerRest;
 
 import com.mariusz.book_collection.entity.Author;
 import com.mariusz.book_collection.service.AuthorService;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,12 +15,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/authors")
-public class AuthorController {
+public class AuthorRestController {
 
     private final AuthorService authorService;
 
     @Autowired
-    public AuthorController(AuthorService authorService) {
+    public AuthorRestController(AuthorService authorService) {
         this.authorService = authorService;
     }
 
