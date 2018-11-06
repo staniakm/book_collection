@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <link rel="stylesheet" type="text/css" href="src/main/resources/static/css/style.css"/>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
     <title>Book details</title>
@@ -20,10 +21,13 @@
            aria-pressed="true" >Book List</a>
     </div>
     <div class="box content">
-        <ul>
-            <li th:if="${book.getDescription()!=null}" th:utext="'Description: '+ '&lt;br /&gt;'  +${book.getDescription()}">description</li>
-            <li th:unless="${book.getDescription()!=null}" th:text="'Description: '">description</li>
-        </ul>
+        <div id="book_description">
+            <p th:if="${book.getDescription()!=null}" th:utext="'Description: '+ '&lt;br /&gt;'  +${book.getDescription()}">description</p>
+            <p th:unless="${book.getDescription()!=null}" th:text="'Description: '">description</p>
+        </div>
+        <div id="book_image">
+            <img src="image_here" alt="image_description">
+        </div>
     </div>
     <div class="box footer" th:text="'ISBN: '+${book.getIsbn()}">Footer</div>
 </div>

@@ -386,3 +386,16 @@ body {
   bottom: 0;
   right: 0;
 }
+
+#book_description {
+  width: 50%;
+  text-align: justify;
+  float: left;
+  display: inline;
+}
+
+#book_image {
+  width: 45%;
+  float: right;
+  display: inline;
+}
