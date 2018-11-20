@@ -18,11 +18,11 @@ public class BookFormMapper {
     }
 
     public Book updateBook(Book book, BookForm bookForm){
-        System.out.println(bookForm);
+//        System.out.println(bookForm);
         book.setTitle(bookForm.getTitle());
         book.setIsbn(bookForm.getIsbn());
         book.setDescription(bookForm.getDescription());
-        System.out.println(book);
+//        System.out.println(book);
         return book;
     }
 

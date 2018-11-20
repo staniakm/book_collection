@@ -12,7 +12,7 @@ import javax.persistence.Id;
 @Entity
 @Data
 @AllArgsConstructor
-public class Author {
+public class Author extends CommonFields {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

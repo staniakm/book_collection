@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="item content">
+    <h1>Add new author</h1>
+    <form class="new_wallet" id="new_wallet" th:action="@{/authors/addAuthor}" th:object="${authorForm}" method="POST" accept-charset="UTF-8">
+        <ul style="width: 40%">
+            <li >
+                <label for="author_first_name">
+                    <span th:text="'Author first name'">first name</span>
+                </label>
+                <br>
+                <input style="width: 100%" type="text" th:field="*{firstName}" id="author_first_name" required/>
+            </li>
+            <li >
+                <label for='author_last_name' >
+                    <span th:text="'Last name'">Last name</span>
+                </label>
+                <br>
+                <input style="width: 100%" type="text" th:field="*{lastName}" name="author_last_name" id="author_last_name"/>
+            </li>
+            <li></li>  <button th:text="'Save new author'" type='submit'>
+        </button></ul>
+        </ul>
+    </form>
+</div>
+</body>
+</html>

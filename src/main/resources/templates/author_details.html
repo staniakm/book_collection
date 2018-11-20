@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" type="text/css" href="src/main/resources/static/css/style.css"/>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+    <title>Author details</title>
+</head>
+<body>
+<div class="wrapper">
+    <div class="box header">
+        <ul>
+            <li th:text="'First name: '+${author.getFirstName()}">First name</li>
+            <li th:text="'Last name: '+${author.getLastName()}">Last name</li>
+        </ul>
+    </div>
+    <div class="box sidebar">
+        <a th:href="@{/books/bookList}" class="btn btn-primary btn-sm active" role="button"
+           aria-pressed="true" >Book List</a>
+    </div>
+    <!--<div class="box content">-->
+        <!--<div id="book_description">-->
+            <!--<p th:if="${book.getDescription()!=null}" th:utext="'Description: '+ '&lt;br /&gt;'  +${book.getDescription()}">description</p>-->
+            <!--<p th:unless="${book.getDescription()!=null}" th:text="'Description: '">description</p>-->
+        <!--</div>-->
+        <!--<div id="book_image">-->
+            <!--<img src="image_here" alt="image_description">-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<div class="box footer" th:text="'ISBN: '+${book.getIsbn()}">Footer</div>-->
+</div>
+</body>
+</html>

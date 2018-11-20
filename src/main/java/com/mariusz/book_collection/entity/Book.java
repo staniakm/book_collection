@@ -13,11 +13,12 @@ import java.util.Objects;
 @Entity
 @Data
 @ToString
-public class Book {
+public class Book extends CommonFields{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @NotNull
     private String title;
 
@@ -39,7 +40,7 @@ public class Book {
     }
 
     public Book(Long id, @NotNull String title, String isbn, String description) {
-        this.id = id;
+        this.setId(id);
         this.title = title;
         setIsbn(isbn);
         this.description = description;
@@ -56,12 +57,12 @@ public class Book {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Book book = (Book) o;
-        return Objects.equals(id, book.id);
+        return Objects.equals(this.getId(), book.getId());
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id);
+        return Objects.hash(this.getId());
     }
 }

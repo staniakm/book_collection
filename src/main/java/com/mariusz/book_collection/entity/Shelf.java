@@ -13,7 +13,7 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Shelf {
+public class Shelf extends CommonFields{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

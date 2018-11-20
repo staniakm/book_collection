@@ -1,6 +1,7 @@
 package com.mariusz.book_collection.service;
 
 import com.mariusz.book_collection.entity.Author;
+import com.mariusz.book_collection.mapper.AuthorFormMapper;
 import com.mariusz.book_collection.repository.AuthorRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,10 +27,11 @@ public class AuthorServiceImplTest {
     private AuthorRepository authorRepository;
 
     private AuthorService authorService;
+    private AuthorFormMapper authorFormMapper;
 
     @Before
     public void setUp(){
-        authorService = new AuthorServiceImpl(authorRepository);
+        authorService = new AuthorServiceImpl(authorRepository, authorFormMapper);
     }
 
     @Test

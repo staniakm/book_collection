@@ -1,19 +1,12 @@
 package com.mariusz.book_collection.controller;
 
-import com.mariusz.book_collection.entity.Book;
 import com.mariusz.book_collection.entity.BookForm;
 import com.mariusz.book_collection.service.AuthorService;
 import com.mariusz.book_collection.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/books")
@@ -61,7 +54,7 @@ public class BookController {
     public String addNewBook (Model model){
         BookForm bookForm = new BookForm();
         model.addAttribute("bookForm", bookForm);
-        return "newBook";
+        return "book_new";
     }
 
     @PostMapping("/addBook")
